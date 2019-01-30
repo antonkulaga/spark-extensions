@@ -29,12 +29,12 @@ class Concatenate(delimiter: String, unique: Boolean) extends org.apache.spark.s
   // Self-explaining
   def deterministic = true
 
-  def initialize(buffer: MutableAggregationBuffer) = {
+  def initialize(buffer: MutableAggregationBuffer): Unit = {
     buffer.update(0, Array.empty[String])
   }
 
   // Iterate over each entry of a group
-  def update(buffer: MutableAggregationBuffer, input: Row) = {
+  def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val str =  input.getString(0)
     val arr = buffer.getSeq[String](0)
     unique match {
@@ -57,7 +57,7 @@ class Concatenate(delimiter: String, unique: Boolean) extends org.apache.spark.s
   }
 
   // Called after all the entries are exhausted.
-  def evaluate(buffer: Row) = {
+  def evaluate(buffer: Row): String = {
     val seq = buffer.getSeq[String](0)
     seq.mkString(delimiter)
   }

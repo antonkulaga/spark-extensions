@@ -2,6 +2,10 @@ package group.research.aging.spark.extensions.functions
 
 import org.apache.spark.sql.expressions.UserDefinedAggregateFunction
 
+/**
+  * Aggregation function to concatenate string content of columns
+  * @param delimiter
+  */
 class ConcatenateString(delimiter: String) extends org.apache.spark.sql.expressions.UserDefinedAggregateFunction {
   import org.apache.spark.sql.Row
   import org.apache.spark.sql.types._
@@ -25,24 +29,24 @@ class ConcatenateString(delimiter: String) extends org.apache.spark.sql.expressi
   // Self-explaining
   def deterministic = true
 
-  def initialize(buffer: MutableAggregationBuffer) = {
+  def initialize(buffer: MutableAggregationBuffer): Unit = {
     buffer.update(0, "")
   }
 
   // Iterate over each entry of a group
-  def update(buffer: MutableAggregationBuffer, input: Row) = {
+  def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val str =  input.getString(0)
     buffer.update(0, buffer.get(0)  + str+ delimiter)
   }
 
   // Merge two partial aggregates
-  def merge(buffer1: MutableAggregationBuffer, buffer2: Row) = {
+  def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
     val str =  buffer2.getString(0)
     buffer1.update(0, buffer1.getString(0) +  str)
   }
 
   // Called after all the entries are exhausted.
-  def evaluate(buffer: Row) = {
+  def evaluate(buffer: Row): String = {
     buffer.getString(0)
   }
 }

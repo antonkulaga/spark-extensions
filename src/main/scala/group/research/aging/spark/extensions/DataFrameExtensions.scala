@@ -3,17 +3,67 @@ package group.research.aging.spark.extensions
 import org.apache.spark.ml.feature.PCAModel
 import org.apache.spark.ml.linalg.Matrix
 import org.apache.spark.ml.stat.Correlation
-import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.expressions.{UserDefinedFunction, Window}
 import org.apache.spark.sql._
 import org.apache.spark.storage.StorageLevel
+import org.apache.spark.sql.types.{LongType, StructField, StructType}
+import org.apache.spark.sql.functions._
+
+import scala.collection.immutable
 
 trait DataFrameExtensions {
 
+  import org.apache.spark._
+  import org.apache.spark.sql.types.StructType
+  import scala.reflect.runtime.universe._
+  import org.apache.spark.storage.StorageLevel
+  import org.apache.spark.rdd._
+  import org.apache.spark.sql._
+  import org.apache.spark.sql.functions._
+  import group.research.aging.spark.extensions._
+  import group.research.aging.spark.extensions.functions._
+
   implicit class DataFrameExtended(dataFrame: DataFrame) {
 
+    //adds index to make it easier to join the dataframes
+    def withIndex(implicit sparkSession: SparkSession): DataFrame = {
+      val ind = StructType(dataFrame.schema.fields :+ StructField("_index", LongType, nullable = false))
+      val zp =  dataFrame.rdd.zipWithIndex.map{case (r, i) => Row.fromSeq(r.toSeq :+ i)}
+      sparkSession.createDataFrame(zp, ind)
+    }
+
+    /**
+      * Transposes a dataframe
+      * @param transBy
+      * @param sparkSession
+      * @return
+      */
+    def transposeUDF(transBy: Seq[String])(implicit sparkSession: SparkSession): DataFrame = {
+      import sparkSession.implicits._
+      val (cols, types) = dataFrame.dtypes.filter{ case (c, _) => !transBy.contains(c)}.unzip
+      require(types.distinct.length == 1)
+
+      val kvs = explode(array(
+        cols.map(c => struct(lit(c).alias("column_name"), col(c).alias("column_value"))): _*
+      ))
+
+      val byExprs = transBy.map(col)
+
+     dataFrame
+        .select(byExprs :+ kvs.alias("_kvs"): _*)
+        .select(byExprs ++ Seq($"_kvs.column_name", $"_kvs.column_value"): _*)
+    }
+
+    /**
+      * Writes dataframe as TSV file
+      * @param path
+      * @param header
+      * @param sep
+      * @return
+      */
     def writeTSV(path: String, header: Boolean = true, sep: String = "\t"): String =
     {
-      dataFrame.write.option("sep", sep).option("header",header).csv(path)
+      dataFrame.write.option("sep", sep).option("header",header).option("maxColumns", 150000).csv(path)
       path
     }
 
@@ -55,12 +105,17 @@ trait DataFrameExtensions {
 
 
     def doPCA(columns: Seq[String], k: Int)(implicit sparkSession: SparkSession): DataFrame = {
-      val pca = dataFrame.fitPCA(columns, k)
-      pca.transform(dataFrame)
+      val vec = dataFrame.toVectors(columns, "features")
+      val pca = new PCA()
+        .setInputCol("features")
+        .setOutputCol("PCA")
+        .setK(k)
+        .fit(vec)
+      pca.transform(vec)
     }
 
 
-    protected def convertCorrellationMatrix(matrix: Matrix, columns: Seq[String]) = {
+    protected def convertCorrellationMatrix(matrix: Matrix, columns: Seq[String]): immutable.IndexedSeq[Row] = {
       require(columns.size == matrix.numCols)
       for(r <- 0 until matrix.numRows) yield {
         val seq = for(c <- 0 until matrix.numCols) yield matrix(r, c)
@@ -71,7 +126,7 @@ trait DataFrameExtensions {
     import org.apache.spark.sql.Row
     import org.apache.spark.sql.types._
 
-    def reduceByMax(key: String, maximize: String)(implicit sparkSession: SparkSession): Dataset[Row] = {
+    def reduceByMax(key: String, maximize: String)(implicit sparkSession: SparkSession): DataFrame = {
       import sparkSession.implicits._
       val schema = dataFrame.schema
       import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -81,7 +136,7 @@ trait DataFrameExtensions {
       }.map(_._2)(encoder)
     }
 
-    def reduceByMin(key: String, minimize: String)(implicit sparkSession: SparkSession) = {
+    def reduceByMin(key: String, minimize: String)(implicit sparkSession: SparkSession): DataFrame = {
       import sparkSession.implicits._
       val schema = dataFrame.schema
       import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -113,5 +168,22 @@ trait DataFrameExtensions {
     }
 
   }
+  import cats._
+  import cats.implicits._
+
+  implicit val dataFrameSemigroup: Semigroup[DataFrame] = new Semigroup[DataFrame] {
+    def combine(x: DataFrame, y: DataFrame): DataFrame = if(x.columns.toSet == y.columns.toSet) x.union(y) else x.join(y, x.columns.intersect(y.columns))
+  }
+
+  /*
+  def same(mp: Map[String, DataFrame]): DataFrame = mp.values.reduce{ case (a, b) => a.join(b, Seq("gene"))}
+
+  def unique(mp: Map[String, DataFrame], key: String): DataFrame = {
+    val list: List[DataFrame] = mp.filterKeys(_!=key).values.toList
+    val el:DataFrame = mp(key)
+    val df: DataFrame = (el::list).reduce{ (a, b) => a.join(b, Seq("gene"), "leftanti")}
+    df.sort(new ColumnName(key + "p_value"), new ColumnName(key + "_log2(fold_change)").desc)
+  }
+  */
 
 }

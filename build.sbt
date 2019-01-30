@@ -8,7 +8,7 @@ organization := "group.research.aging"
 
 scalaVersion :=  "2.11.12"
 
-version := "0.0.2"
+version := "0.0.5"
 
 coursierMaxIterations := 200
 
@@ -32,13 +32,11 @@ resolvers += Resolver.sonatypeRepo("releases")
 
 resolvers += sbt.Resolver.bintrayRepo("comp-bio-aging", "main")
 
-resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
-
 resolvers += "ICM repository" at "http://maven.icm.edu.pl/artifactory/repo"
 
 resolvers += "jitpack.io" at "https://jitpack.io"
 
-lazy val sparkVersion = "2.3.1"
+lazy val sparkVersion = "2.4.0"
 
 libraryDependencies ++= Seq(
 
@@ -48,9 +46,11 @@ libraryDependencies ++= Seq(
 
   "org.apache.spark" %% "spark-mllib" % sparkVersion,
 
+  "org.typelevel" %% "cats-core" % "1.6.0-RC1",
+  
   "org.scalatest" %% "scalatest" % "3.0.5" % Test,
 
-  "com.holdenkarau" %% "spark-testing-base" % "2.3.1_0.10.0" % Test
+  "com.holdenkarau" %% "spark-testing-base" % "2.4.0_0.11.0" % Test
 )
 
 initialCommands in (Test, console) := """ammonite.Main().run()"""
@@ -69,7 +69,7 @@ bintrayOrganization := Some("comp-bio-aging")
 
 licenses += ("MPL-2.0", url("http://opensource.org/licenses/MPL-2.0"))
 
-libraryDependencies += "com.lihaoyi" % "ammonite" % "1.1.2" % Test cross CrossVersion.full
+libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.3" % Test cross CrossVersion.full
 
 sourceGenerators in Test += Def.task {
   val file = (sourceManaged in Test).value / "amm.scala"

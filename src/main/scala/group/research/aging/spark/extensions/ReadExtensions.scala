@@ -43,12 +43,12 @@ trait ReadExtensions {
         .csv(path).as[T]
     }
 
-    def rank(df: DataFrame, name: String, rankSuffix: String = "_rank") =
+    def rank(df: DataFrame, name: String, rankSuffix: String = "_rank"): DataFrame =
       df.withColumn(name + rankSuffix, org.apache.spark.sql.functions.dense_rank().over(Window.orderBy(new ColumnName(name).desc)))
 
     def ranks(df: DataFrame,
               names: Seq[String],
-              rankSuffix: String = "_rank") = names.foldLeft(df){
+              rankSuffix: String = "_rank"): DataFrame = names.foldLeft(df){
       case (f, n)=> rank(f, n, rankSuffix)
     }
 
