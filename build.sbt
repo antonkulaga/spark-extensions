@@ -8,15 +8,15 @@ organization := "group.research.aging"
 
 scalaVersion :=  "2.11.12"
 
-version := "0.0.5"
+version := "0.0.7"
 
 coursierMaxIterations := 200
 
 isSnapshot := false
 
-scalacOptions ++= Seq( "-target:jvm-1.8", "-feature", "-language:_" )
+scalacOptions ++= Seq("-feature", "-language:_" )
 
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint", "-J-Xss5M", "-encoding", "UTF-8")
+javacOptions ++= Seq("-Xlint", "-J-Xss5M", "-encoding", "UTF-8")
 
 javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
 
@@ -36,7 +36,7 @@ resolvers += "ICM repository" at "http://maven.icm.edu.pl/artifactory/repo"
 
 resolvers += "jitpack.io" at "https://jitpack.io"
 
-lazy val sparkVersion = "2.4.0"
+lazy val sparkVersion = "2.4.3"
 
 libraryDependencies ++= Seq(
 
@@ -46,9 +46,9 @@ libraryDependencies ++= Seq(
 
   "org.apache.spark" %% "spark-mllib" % sparkVersion,
 
-  "org.typelevel" %% "cats-core" % "1.6.0-RC1",
+  "org.typelevel" %% "cats-core" % "1.6.0",
   
-  "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.7" % Test,
 
   "com.holdenkarau" %% "spark-testing-base" % "2.4.0_0.11.0" % Test
 )
@@ -69,7 +69,7 @@ bintrayOrganization := Some("comp-bio-aging")
 
 licenses += ("MPL-2.0", url("http://opensource.org/licenses/MPL-2.0"))
 
-libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.3" % Test cross CrossVersion.full
+libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.6" % Test cross CrossVersion.full
 
 sourceGenerators in Test += Def.task {
   val file = (sourceManaged in Test).value / "amm.scala"
