@@ -8,7 +8,7 @@ organization := "group.research.aging"
 
 scalaVersion :=  "2.11.12"
 
-version := "0.0.7"
+version := "0.0.7.1"
 
 coursierMaxIterations := 200
 
@@ -48,9 +48,9 @@ libraryDependencies ++= Seq(
 
   "org.typelevel" %% "cats-core" % "1.6.0",
   
-  "org.scalatest" %% "scalatest" % "3.0.7" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test,
 
-  "com.holdenkarau" %% "spark-testing-base" % "2.4.0_0.11.0" % Test
+  "com.holdenkarau" %% "spark-testing-base" % "2.4.3_0.12.0" % Test
 )
 
 initialCommands in (Test, console) := """ammonite.Main().run()"""
@@ -69,7 +69,7 @@ bintrayOrganization := Some("comp-bio-aging")
 
 licenses += ("MPL-2.0", url("http://opensource.org/licenses/MPL-2.0"))
 
-libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.6" % Test cross CrossVersion.full
+libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.7" cross CrossVersion.full
 
 sourceGenerators in Test += Def.task {
   val file = (sourceManaged in Test).value / "amm.scala"

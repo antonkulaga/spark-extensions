@@ -11,7 +11,35 @@ import org.apache.spark.sql.functions._
 
 import scala.collection.immutable
 
-trait DataFrameExtensions {
+
+trait Local {
+  import ammonite.ops._
+ // import ammonite.ops.ImplicitWd._
+
+  def name(p: Path) = if(p.ext!="") p.baseName + "." + p.ext else p.baseName
+
+  def movePart(dir: Path, part: Path, extension: String = "") = { dir.toIO.exists()
+    val newPlace = dir / up / name(part)
+    mv(part, newPlace)
+    val dirName = if(extension == "" || dir.ext == extension) name(dir) else name(dir).replace(dir.ext, extension)
+    val newName = dir / up / dirName
+    rm! dir
+    mv(newPlace, newName)
+  }
+
+  def mergeParts(dir: Path, extension: String = "") = {
+    val parts = (ls! dir).filter(p=> !(name(p).startsWith(".")) && name(p).contains("part"))
+    if(parts.size > 1) println(s"merging multiple parts of ${dir} is not yet supported, please resave stuff with coalescence(1)\n Parts are: ${parts.mkString("\n")}")
+    else if(parts.isEmpty) println("no parts detected!")
+    else {
+      movePart(dir, parts.head, extension)
+      println(s"parts of ${dir} merged!")
+    }
+  }
+
+}
+
+trait DataFrameExtensions extends Local {
 
   import org.apache.spark._
   import org.apache.spark.sql.types.StructType
@@ -61,9 +89,14 @@ trait DataFrameExtensions {
       * @param sep
       * @return
       */
-    def writeTSV(path: String, header: Boolean = true, sep: String = "\t"): String =
+    def writeTSV(path: String, header: Boolean = true, sep: String = "\t", local: Boolean = false): String =
     {
-      dataFrame.write.option("sep", sep).option("header",header).option("maxColumns", 150000).csv(path)
+      val df = if(local) dataFrame.coalesce(1) else dataFrame
+      df.write.option("sep", sep).option("header",header).option("maxColumns", 150000).csv(path)
+      if(local) {
+        //println("merging is not yet implemented!")
+        mergeParts(ammonite.ops.Path(path))
+      }
       path
     }
 
@@ -166,6 +199,7 @@ trait DataFrameExtensions {
       val df = Correlation.corr(cor, "features", method = "spearman")
       transformCorrellationMatrix(df, columns)
     }
+
 
   }
   import cats._
