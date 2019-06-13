@@ -8,7 +8,7 @@ organization := "group.research.aging"
 
 scalaVersion :=  "2.11.12"
 
-version := "0.0.7.1"
+version := "0.0.7.2"
 
 coursierMaxIterations := 200
 

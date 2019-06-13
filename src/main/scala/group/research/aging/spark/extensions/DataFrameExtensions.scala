@@ -89,10 +89,21 @@ trait DataFrameExtensions extends Local {
       * @param sep
       * @return
       */
-    def writeTSV(path: String, header: Boolean = true, sep: String = "\t", local: Boolean = false): String =
+    def writeTSV(path: String, header: Boolean = true, sep: String = "\t", local: Boolean = true): String =
     {
       val df = if(local) dataFrame.coalesce(1) else dataFrame
       df.write.option("sep", sep).option("header",header).option("maxColumns", 150000).csv(path)
+      if(local) {
+        //println("merging is not yet implemented!")
+        mergeParts(ammonite.ops.Path(path))
+      }
+      path
+    }
+
+    def writeParquet(path: String, local: Boolean = true): String =
+    {
+      val df = if(local) dataFrame.coalesce(1) else dataFrame
+      df.write.parquet(path)
       if(local) {
         //println("merging is not yet implemented!")
         mergeParts(ammonite.ops.Path(path))
