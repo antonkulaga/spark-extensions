@@ -25,12 +25,12 @@ trait ReadExtensions {
 
     def sparkContext: SparkContext = session.sparkContext
 
-    def readTSV(path: String, headers: Boolean = false, sep: String = "\t", comment: String = "#", sqlName: String = ""): DataFrame = {
+    def readTSV(path: String, header: Boolean = false, sep: String = "\t", comment: String = "#", sqlName: String = ""): DataFrame = {
       val df = session.read
         .option("sep", sep)
         .option("comment", comment)
         .option("inferSchema", true)
-        .option("header", headers)
+        .option("header", header)
         .option("ignoreLeadingWhiteSpace", true)
         .option("ignoreTrailingWhiteSpace", true)
         .option("ignoreTrailingWhiteSpace", true)

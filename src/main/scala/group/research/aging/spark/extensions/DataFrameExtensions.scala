@@ -89,10 +89,23 @@ trait DataFrameExtensions extends Local {
       * @param sep
       * @return
       */
-    def writeTSV(path: String, header: Boolean = true, sep: String = "\t", local: Boolean = true): String =
+    def writeTSV(path: String, header: Boolean = true, sep: String = "\t", local: Boolean = true, rewrite: Boolean = false,
+                 quote: String =  "\u0000",
+                 nullValue: String = "",
+                 treatEmptyValuesAsNulls: Boolean = false,
+                 quoteMode: String = "MINIMAL"
+                ): String =
     {
+      import ammonite.ops._
       val df = if(local) dataFrame.coalesce(1) else dataFrame
-      df.write.option("sep", sep).option("header",header).option("maxColumns", 150000).csv(path)
+      if(rewrite && Path(path).toIO.exists()) Path(path).toIO.delete()
+      df.write.option("sep", sep)
+        .option("header",header)
+        .option("maxColumns", 150000)
+        .option("quote", quote)
+        .option("nullValue", "")
+        .option("quoteMode", quoteMode)
+        .csv(path)
       if(local) {
         //println("merging is not yet implemented!")
         mergeParts(ammonite.ops.Path(path))
