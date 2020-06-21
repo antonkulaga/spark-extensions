@@ -35,8 +35,9 @@ class ConcatenateString(delimiter: String) extends org.apache.spark.sql.expressi
 
   // Iterate over each entry of a group
   def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
+    val value = buffer.get(0)
     val str =  input.getString(0)
-    buffer.update(0, buffer.get(0)  + str+ delimiter)
+    buffer.update(0, if(value=="" || value == null) str else value + delimiter  + str)
   }
 
   // Merge two partial aggregates

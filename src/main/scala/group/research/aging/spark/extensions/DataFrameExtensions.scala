@@ -92,7 +92,7 @@ trait DataFrameExtensions extends Local {
     def writeTSV(path: String, header: Boolean = true, sep: String = "\t", local: Boolean = true, rewrite: Boolean = false,
                  quote: String =  "\u0000",
                  nullValue: String = "",
-                 treatEmptyValuesAsNulls: Boolean = false,
+                 treatEmptyValflowuesAsNulls: Boolean = false,
                  quoteMode: String = "MINIMAL"
                 ): String =
     {
