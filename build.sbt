@@ -6,9 +6,9 @@ name := "spark-extensions"
 
 organization := "group.research.aging"
 
-scalaVersion :=  "2.12.10"
+scalaVersion :=  "2.12.11"
 
-version := "0.0.8.3"
+version := "0.0.9"
 
 isSnapshot := false
 
@@ -34,7 +34,7 @@ resolvers += ("ICM repository" at "http://maven.icm.edu.pl/artifactory/repo").wi
 
 resolvers += "jitpack.io" at "https://jitpack.io"
 
-lazy val sparkVersion = "2.4.6"
+lazy val sparkVersion = "3.0.0"
 
 libraryDependencies ++= Seq(
 
@@ -44,9 +44,9 @@ libraryDependencies ++= Seq(
 
   "org.apache.spark" %% "spark-mllib" % sparkVersion,
 
-  "org.typelevel" %% "cats-core" % "2.1.0",
+  "org.typelevel" %% "cats-core" % "2.1.1",
   
-  "org.scalatest" %% "scalatest" % "3.1.2" % Test
+  "org.scalatest" %% "scalatest" % "3.2.0" % Test
 
   //"com.holdenkarau" %% "spark-testing-base" % "2.4.4_0.12.0" % Test
 )
