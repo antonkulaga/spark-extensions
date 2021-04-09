@@ -9,4 +9,11 @@ package object functions {
   //def get_subject: UserDefinedFunction =  udf[String, String]{ str=> str.split("-").take(2).mkString("-")}
   //def get_avg_age: UserDefinedFunction =  udf[Double, String]{ str=> val arr = str.split("-"); (arr(1).toInt + arr(0).toInt) / 2.0}
 
+  def capitalize_first: UserDefinedFunction = udf[String, String] { (species) => species.head.toUpper + species.tail }
+  def prefix(prefix: String, sufix: String): UserDefinedFunction =  udf[String, String]{ str=> prefix + str + sufix}
+  def not_null: UserDefinedFunction = udf[String, String](str=> if(str==null || str=="\\N") "" else str)
+  def underscored: UserDefinedFunction =udf[String, String](str=> str.replace(" ", "_"))
+
+  def file_exists: UserDefinedFunction = udf[Boolean, String] { str => new java.io.File(str).exists}
+
 }

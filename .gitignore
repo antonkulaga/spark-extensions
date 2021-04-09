@@ -4,6 +4,7 @@ out
 
 # sbt specific
 .cache/
+.bsp
 .history/
 .lib/
 dist/*

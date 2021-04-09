@@ -1,13 +1,11 @@
 package group.research.aging.spark.extensions
 
+
 import org.apache.spark.ml.feature.PCAModel
 import org.apache.spark.ml.linalg.Matrix
 import org.apache.spark.ml.stat.Correlation
-import org.apache.spark.sql.expressions.{UserDefinedFunction, Window}
-import org.apache.spark.sql._
-import org.apache.spark.storage.StorageLevel
-import org.apache.spark.sql.types.{LongType, StructField, StructType}
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.types.{LongType, StructField}
 
 import scala.collection.immutable
 
@@ -41,15 +39,10 @@ trait Local {
 
 trait DataFrameExtensions extends Local {
 
-  import org.apache.spark._
-  import org.apache.spark.sql.types.StructType
-  import scala.reflect.runtime.universe._
-  import org.apache.spark.storage.StorageLevel
-  import org.apache.spark.rdd._
   import org.apache.spark.sql._
   import org.apache.spark.sql.functions._
-  import group.research.aging.spark.extensions._
-  import group.research.aging.spark.extensions.functions._
+  import org.apache.spark.sql.types.StructType
+  import org.apache.spark.storage.StorageLevel
 
   implicit class DataFrameExtended(dataFrame: DataFrame) {
 
@@ -227,7 +220,6 @@ trait DataFrameExtensions extends Local {
 
   }
   import cats._
-  import cats.implicits._
 
   implicit val dataFrameSemigroup: Semigroup[DataFrame] = new Semigroup[DataFrame] {
     def combine(x: DataFrame, y: DataFrame): DataFrame = if(x.columns.toSet == y.columns.toSet) x.union(y) else x.join(y, x.columns.intersect(y.columns))

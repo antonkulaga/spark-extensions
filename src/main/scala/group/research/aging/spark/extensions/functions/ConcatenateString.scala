@@ -1,17 +1,13 @@
 package group.research.aging.spark.extensions.functions
 
-import org.apache.spark.sql.expressions.UserDefinedAggregateFunction
-
 /**
   * Aggregation function to concatenate string content of columns
   * @param delimiter
   */
 class ConcatenateString(delimiter: String) extends org.apache.spark.sql.expressions.UserDefinedAggregateFunction {
   import org.apache.spark.sql.Row
-  import org.apache.spark.sql.types._
-  import org.apache.spark.sql.functions._
-  import org.apache.spark.sql.types._
   import org.apache.spark.sql.expressions._
+  import org.apache.spark.sql.types._
 
   // Input Data Type Schema
   def inputSchema: org.apache.spark.sql.types.StructType = org.apache.spark.sql.types.StructType(
