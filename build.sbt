@@ -4,7 +4,7 @@ import sbt._
 
 name := "spark-extensions"
 
-organization := "group.research.aging"
+organization := "com.github.antonkulaga"
 
 scalaVersion :=  "2.12.12"
 
