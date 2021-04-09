@@ -8,7 +8,7 @@ organization := "com.github.antonkulaga"
 
 scalaVersion :=  "2.12.12"
 
-version := "0.2.0"
+version := "0.2.1"
 
 isSnapshot := false
 
