@@ -6,9 +6,11 @@ name := "spark-extensions"
 
 organization := "com.github.antonkulaga"
 
-scalaVersion :=  "2.12.12"
+scalaVersion :=  "2.12.15"
 
-version := "0.2.1"
+crossScalaVersions := List("2.12.15", "2.13.7")
+
+version := "0.2.2"
 
 isSnapshot := false
 
@@ -32,7 +34,7 @@ resolvers += ("ICM repository" at "http://maven.icm.edu.pl/artifactory/repo").wi
 
 resolvers += "jitpack.io" at "https://jitpack.io"
 
-lazy val sparkVersion = "3.1.1"
+lazy val sparkVersion = "3.2.0"
 
 libraryDependencies ++= Seq(
 
@@ -42,11 +44,11 @@ libraryDependencies ++= Seq(
 
   "org.apache.spark" %% "spark-sql" % sparkVersion,
 
-  "org.typelevel" %% "cats-core" % "2.5.0",
+  "org.typelevel" %% "cats-core" % "2.7.0",
 
-  "org.scalatest" %% "scalatest" % "3.2.7" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.10" % Test,
 
-  "com.lihaoyi" %% "ammonite-ops" % "2.3.8"
+  "com.lihaoyi" %% "ammonite-ops" % "2.4.1"
 
   //"com.holdenkarau" %% "spark-testing-base" % "2.4.4_0.12.0" % Test
 )
