@@ -6,11 +6,9 @@ name := "spark-extensions"
 
 organization := "com.github.antonkulaga"
 
-scalaVersion :=  "2.12.15"
+scalaVersion :=  "2.13.6"
 
-crossScalaVersions := List("2.12.15", "2.13.7")
-
-version := "0.2.2"
+version := "0.2.3"
 
 isSnapshot := false
 
@@ -20,11 +18,11 @@ javacOptions ++= Seq("-Xlint", "-J-Xss5M", "-encoding", "UTF-8")
 
 javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
 
-mainClass in Compile := Some("comp.bio.aging.extractor.Main")
+Compile / mainClass := Some("comp.bio.aging.extractor.Main")
 
-resourceDirectory in Test := baseDirectory { _ / "files" }.value
+Test / resourceDirectory := baseDirectory { _ / "files" }.value
 
-unmanagedClasspath in Compile ++= (unmanagedResources in Compile).value
+Compile / unmanagedClasspath ++= (Compile / unmanagedResources).value
 
 resolvers += Resolver.mavenLocal
 
