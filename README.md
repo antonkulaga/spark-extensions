@@ -49,5 +49,5 @@ Add this to your Apache Zeppelin configuration:
 %spark.dep
 
 z.addRepo("combioaging").url("https://dl.bintray.com/comp-bio-aging/main")
-z.load("group.research.aging:spark-extensions_2.11:0.0.2")
+z.load("group.research.aging:spark-extensions_2.11:0.2.4")
 ```

@@ -8,7 +8,7 @@ organization := "com.github.antonkulaga"
 
 scalaVersion :=  "2.13.6"
 
-version := "0.2.3"
+version := "0.2.4"
 
 isSnapshot := false
 
@@ -32,7 +32,7 @@ resolvers += ("ICM repository" at "http://maven.icm.edu.pl/artifactory/repo").wi
 
 resolvers += "jitpack.io" at "https://jitpack.io"
 
-lazy val sparkVersion = "3.2.0"
+lazy val sparkVersion = "3.4.1"
 
 libraryDependencies ++= Seq(
 
